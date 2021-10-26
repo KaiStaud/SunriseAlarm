@@ -8,13 +8,16 @@
 
 /* -------------- Variables ----------------- */
 uint32_t sunrise_time_ms;
-uint32_t volatile elapsed_time
+uint32_t volatile elapsed_time;
 uint32_t max_brightness;
 
-const max_hue = 65536*5/6; // Middle purple
-const min_hue = 65536/6;
+const uint32_t max_hue = 65536*5/6; // Middle purple
+const uint32_t min_hue = 65536/6;
 
- Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+const uint8_t pin = 5;
+const uint8_t num_pixels = 8;
+
+ Adafruit_NeoPixel strip(num_pixels, pin, NEO_GRB + NEO_KHZ800);
 
 /* -------------- Functions ----------------- */
 
@@ -39,23 +42,24 @@ void register_pixels(uint32_t param_pin)
 }
 
 // Calculates the Fading Paramters by a linear fit
-uint32_t CalculateFade(uint32_t param_minutes,uint32_t param_seconds)
+uint32_t CalculateFade(uint32_t param_mseconds)
 {
- uint32_t  m_hue;
+ uint32_t  m_hue,new_hue;
  m_hue = (max_hue - min_hue) / sunrise_time_ms; // hue per ms (hpms)
- new_hue = m_hue * sunrise_time_ms + min_hue;
+ new_hue = m_hue * param_mseconds + min_hue;
  return new_hue;
 }
 
 // Start,Stop and Continue Functions for Sunrise Simulation
 void StartSunrise()
 {
-  uint32_t start_hue = CalculateFade(0,0);
+  uint32_t hue;
   while(elapsed_time <= sunrise_time_ms)
   {
-    uint32_t rgb_color = pixels.ColorHSV(hue,saturation,value);
-    pixels.fill(rgb_color);
-    pixels.show();
+    hue = CalculateFade(0);
+    uint32_t rgb_color = strip.ColorHSV(hue,255,255);
+    strip.fill(rgb_color);
+    strip.show();
     delay(1); // Will be replaced with interrupt
     elapsed_time++;
   }
