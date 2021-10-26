@@ -29,6 +29,17 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 #define NUMPIXELS 8
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 
+void rgb_fade()
+{
+  int saturation = 255, value = 255;
+  for(uint32_t hue =0; hue<65535;hue+=13)
+  { 
+    uint32_t rgb_color = pixels.ColorHSV(hue,saturation,value);
+    pixels.fill(rgb_color);
+    pixels.show();
+    delay(1);
+  }
+}
 
 void setup() {
   // set up the LCD's number of columns and rows:
@@ -55,6 +66,7 @@ void loop() {
   // print the number of seconds since reset:
   lcd.print(millis() / 1000);
   analogWrite(6,120);
+  rgb_fade();
 
 // Will be changed to HSV Values for better fading!
     for(int i=0; i<NUMPIXELS; i++) { // For each pixel...
