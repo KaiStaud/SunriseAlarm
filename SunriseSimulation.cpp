@@ -36,9 +36,9 @@ bool SetSunriseSettings(uint32_t param_brightness)
 }
 
 // Attaches the neopixel class to specific pin
-void register_pixels(uint32_t param_pin)
+void RegisterSunriseHw(uint32_t param_pin)
 {
-  
+ strip.begin(); 
 }
 
 // Calculates the Fading Paramters by a linear fit
@@ -56,7 +56,7 @@ void StartSunrise()
   uint32_t hue;
   while(elapsed_time <= sunrise_time_ms)
   {
-    hue = CalculateFade(0);
+    hue = CalculateFade(elapsed_time);
     uint32_t rgb_color = strip.ColorHSV(hue,255,255);
     strip.fill(rgb_color);
     strip.show();
@@ -68,7 +68,7 @@ void StartSunrise()
 
 void StopSunrise()
 {
-  
+  elapsed_time =0;
 }
 
 // Continues the 

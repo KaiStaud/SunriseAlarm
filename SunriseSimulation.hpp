@@ -9,7 +9,7 @@ void SetFadeDuration(uint32_t param_minutes,uint32_t param_seconds);
 bool SetSunriseSettings(uint32_t param_brightness); 
 
 // Attaches the neopixel class to specific pin
-void register_pixels(uint32_t param_pin);
+void RegisterSunriseHw(uint32_t param_pin);
 
 // Start,Stop and Continue Functions for Sunrise Simulation
 void StartSunrise();
