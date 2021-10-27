@@ -13,8 +13,9 @@ uint32_t max_brightness;
 
 const uint32_t max_hue = 65536*5/6; // Middle purple
 const uint32_t min_hue = 65536/6;
+const uint32_t delta_hue = 65536/6; 
 
-const uint8_t pin = 5;
+const uint8_t pin = 2;
 const uint8_t num_pixels = 8;
 
  Adafruit_NeoPixel strip(num_pixels, pin, NEO_GRB + NEO_KHZ800);
@@ -53,18 +54,7 @@ uint32_t CalculateFade(uint32_t param_mseconds)
 // Start,Stop and Continue Functions for Sunrise Simulation
 void StartSunrise()
 {
-  uint32_t hue;
-  while(elapsed_time <= sunrise_time_ms)
-  {
-    hue = CalculateFade(elapsed_time);
-    uint32_t rgb_color = strip.ColorHSV(hue,255,255);
-    strip.fill(rgb_color);
-    strip.show();
-    delay(1); // Will be replaced with interrupt
-    elapsed_time++;
   }
-  
-}
 
 void StopSunrise()
 {
