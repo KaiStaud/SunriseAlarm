@@ -1,6 +1,5 @@
 // Sunrise Simulation is done with Neopixels:
 #include <Adafruit_NeoPixel.h>
-#include <TimerOne.h>
 
 /*
  * Simulates the Sunrise with an smooth fade from dark Red to bright white.
@@ -17,17 +16,12 @@ uint32_t max_brightness;
 const uint8_t pin = 2;
 const uint8_t num_pixels = 8;
 
-volatile uint64_t time_ms;
+uint64_t t_ms;
+
 
  Adafruit_NeoPixel strip(num_pixels, pin, NEO_GRB + NEO_KHZ800);
 
 /* -------------- Functions ----------------- */
-
-/* ISR Routine */
-void timer_isr()
-{
-  time_ms++;
-}
 
 // Setter for sunrise parameters
 void SetFadeDuration(uint32_t param_minutes,uint32_t param_seconds)
@@ -45,61 +39,68 @@ bool SetSunriseSettings(uint32_t param_brightness)
 // Attaches the neopixel class to specific pin
 void RegisterSunriseHw(uint32_t param_pin)
 {
- Timer1.initialize(timer_us);
- Timer1.attachInterrupt(timer_isr); 
- // Stop the Interrupt for now, we will start it again when needed!
- noInterrupts();
  // Assign new pin and start up pixels 
- strip.setPin(param_pin); 
+ //strip.setPin(param_pin); 
  strip.begin(); 
 }
 
 /*---------------------- HSV Color Functions ---------------------------- */
 uint16_t hue (uint16_t t)
 {
-  uint16_t hue;
-  // First fade phase: Fade from magenta to red:
-  if(time_ms < sunrise_time_ms/2)
+  uint32_t hue;
+  // Fade from magenta to red
+  if(t < 2500)
   {
     hue = 55613 +  10922 / (2500)* t;
   }
-  // Seconds fade phase: Fade from red to yellow:
-  else
+  // Fade from red to yellow
+  if(t > 2500)
   {
-    hue = 7000 / (2500)* t;
+    hue = 10000 / (2500)* (t-2500);
   }
   return hue;
-
 }
 
 // Increase brightness in linear fashion!
 uint16_t value(uint16_t t)
 {
   uint16_t value;
-  value = 255 * t / sunrise_time_ms; 
-  return value;
+  value = 255 / sunrise_time_ms * t; 
+  return 255;
 }
 
 
 // How to fade?
 uint16_t lightness (uint16_t t)
 {
+  uint32_t lightness = 255;
+
+  // Start fading from yellow to white:
+  // yellow is located around 12% total hue (ca. 8000)
   
+  return (uint16_t) lightness;
 }
 
 /*---------------------- RGB Color Functions ---------------------------- */
 // Calculate gamma corrected RGB colors
-uint32_t HSV_to_RGB()
+uint32_t SetPixels(uint64_t t)
 {
-  uint64_t t = time_ms;
-  return strip.gamma32(strip.ColorHSV(hue(t),value(t),lightness(t)));
+  uint32_t rgb =  strip.gamma32(strip.ColorHSV(hue(t),value(t),lightness(t)));
+  strip.fill(rgb);
+  strip.show();
+  return rgb; 
 }
 
 // Start,Stop and Continue Functions for Sunrise Simulation
 void StartSunrise()
 {
-// Restart timer1  
-interrupts();
+  uint32_t t = 0;
+  uint32_t rgb ;
+  while(t <= 5000)
+  {
+    SetPixels(t++);
+    delay(1);
+  }
 }
 
 void StopSunrise()

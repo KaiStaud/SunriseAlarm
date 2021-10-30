@@ -15,3 +15,4 @@ void RegisterSunriseHw(uint32_t param_pin);
 void StartSunrise();
 void StopSunrise();
 void ContinueSunrise();
+uint32_t CalcHue(uint64_t t);

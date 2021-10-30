@@ -19,7 +19,9 @@
 
 // Sunrise Sources
 #include "SunriseSimulation.hpp"
+#include "CLI.hpp"
 
+using namespace SunriseClock;
 static DS3231 RTC;
 
 // Brightness / Contrast is set via PWM:
@@ -27,62 +29,27 @@ const int contrast = 120;
 const int rs = 7, en = 8, d4 = 9, d5 = 10, d6 = 11, d7 = 12;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
+CLI service_cli;
+
 void setup() {
   Serial.begin(9600);
+  delay(2000);
+  service_cli.Open(2);
   // set up the LCD's number of columns and rows:
   lcd.begin(16, 2);
   // Print a message to the LCD.
   lcd.print("hello, world!");
-  RTC.begin();
-  if(RTC.isRunning());
-  else
-  {
-    RTC.setHourMode(CLOCK_H24);
-    RTC.setDateTime(__DATE__, __TIME__);
-    RTC.startClock();
-  }
   analogWrite(6,120); // Contrast will be set by rotary encoder 
-  RegisterSunriseHw(5);
+  RegisterSunriseHw(2);
   pixels.begin();
 }
 
 void loop() {
-  uint32_t colors[5] = {54613,43690,32767,21845,0};
-  uint32_t saturation[5] = {70,32767,21845,0};
-  uint32_t t = 0;
-  uint32_t hue;
-  uint32_t rgb_color ;
+  service_cli.GetCommand();
   // set the cursor to column 0, line 1
-  // (note: line 1 is the second row, since counting begins with 0):
   lcd.setCursor(0, 1);
-  // print the number of seconds since reset:
   lcd.print(millis() / 1000);
-  //uint32_t rgb_color = pixels.gamma32(pixels.ColorHSV(10000,70,100));
-  //pixels.fill(rgb_color);
-  //pixels.show();
 
-  // Fade from magenta to red
-  while(t < 2500)
-  {
-    hue = 55613 +  10922 / (2500)* t;
-    rgb_color =  pixels.gamma32(pixels.ColorHSV(hue,255,255));
-    t++;
-    pixels.fill(rgb_color);
-    pixels.show();
-    delay(1);
-  }
-  t= 0;
-  // Fade from red to yellow
-  while(t < 2500)
-  {
-    hue = 7000 / (2500)* t;
-    rgb_color =  pixels.gamma32(pixels.ColorHSV(hue,255,255));
-    t++;
-    pixels.fill(rgb_color);
-    pixels.show();
-    delay(1);
-  }
-  Serial.println(hue);
-  while(1);
-  delay(1000);
+//SetFadeDuration(0,5);
+//StartSunrise();
 }
