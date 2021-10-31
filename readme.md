@@ -21,4 +21,5 @@ by price regarding its options.
 - LiquidCrystal
 - Adafruit_Neopixel
 - Wire
-- RTC
+- RTCLib
+- SimpleCLI

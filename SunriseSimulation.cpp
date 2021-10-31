@@ -10,6 +10,7 @@
 const uint64_t timer_us = 1000000;
 
 uint32_t sunrise_time_ms;
+uint32_t t_fade_to_white = 5000;
 uint32_t volatile elapsed_time;
 uint32_t max_brightness;
 
@@ -58,18 +59,12 @@ uint16_t hue (uint16_t t)
   {
     hue = 10000 / (2500)* (t-2500);
   }
+  if(t >= 5000) // Clamp hue at yellow  
+  {
+    hue = 10000;
+  }
   return hue;
 }
-
-// Increase brightness in linear fashion!
-uint16_t value(uint16_t t)
-{
-  uint16_t value;
-  value = 255 / sunrise_time_ms * t; 
-  return 255;
-}
-
-
 // How to fade?
 uint16_t lightness (uint16_t t)
 {
@@ -77,7 +72,14 @@ uint16_t lightness (uint16_t t)
 
   // Start fading from yellow to white:
   // yellow is located around 12% total hue (ca. 8000)
-  
+  if(t >= 5000) // reached at t >= 5000
+  {
+    lightness = 255-(255-80)*(t-5000)/t_fade_to_white;
+  }
+  else // Till yellow: maximum saturation
+  {
+    lightness = 255;
+  }
   return (uint16_t) lightness;
 }
 
@@ -85,7 +87,7 @@ uint16_t lightness (uint16_t t)
 // Calculate gamma corrected RGB colors
 uint32_t SetPixels(uint64_t t)
 {
-  uint32_t rgb =  strip.gamma32(strip.ColorHSV(hue(t),value(t),lightness(t)));
+  uint32_t rgb =  strip.gamma32(strip.ColorHSV(hue(t),lightness(t),255));//lightness(t),value(t)));
   strip.fill(rgb);
   strip.show();
   return rgb; 
@@ -96,7 +98,7 @@ void StartSunrise()
 {
   uint32_t t = 0;
   uint32_t rgb ;
-  while(t <= 5000)
+  while(t <= 10000)
   {
     SetPixels(t++);
     delay(1);

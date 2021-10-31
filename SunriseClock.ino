@@ -50,6 +50,7 @@ void loop() {
   lcd.setCursor(0, 1);
   lcd.print(millis() / 1000);
 
-//SetFadeDuration(0,5);
-//StartSunrise();
+SetFadeDuration(0,5);
+StartSunrise();
+while(1);
 }
