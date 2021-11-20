@@ -35,10 +35,7 @@ void setup() {
   Serial.begin(9600);
   delay(2000);
   service_cli.Open(2);
-  // set up the LCD's number of columns and rows:
-  lcd.begin(16, 2);
-  // Print a message to the LCD.
-  lcd.print("hello, world!");
+
   analogWrite(6,120); // Contrast will be set by rotary encoder 
   RegisterSunriseHw(2);
   pixels.begin();
@@ -46,11 +43,8 @@ void setup() {
 
 void loop() {
   service_cli.GetCommand();
-  // set the cursor to column 0, line 1
-  lcd.setCursor(0, 1);
-  lcd.print(millis() / 1000);
 
-SetFadeDuration(0,10);
-StartSunrise();
+//SetFadeDuration(0,10);
+//StartSunrise();
 while(1);
 }
