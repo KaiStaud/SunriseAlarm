@@ -19,9 +19,7 @@ by price regarding its options.
 ## Dependencies
 - Snooze
 - LiquidCrystal
-- BigFont02
 - Adafruit_Neopixel
 - Wire
 - RTCLib
 - SimpleCLI
-- ArduinoJSON

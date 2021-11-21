@@ -1,262 +1,52 @@
 #include "Display.hpp"
+#include <BigFont02.h>
+#include <LiquidCrystal.h>
 
-/* Number One */
-const byte vdash[8] = {
-  B00001,
-  B00011,
-  B00110,
-  B01100,
-  B11000,
-  B10000,
-  B00000,
-};
+const int rs = 7, en = 8, d4 = 9, d5 = 10, d6 = 11, d7 = 12;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+BigFont02     big(&lcd);
 
-const byte dash[8] = {
-  B11111,
-  B11111,
-  B00111,
-  B00111,
-  B00111,
-  B00111,
-  B00111,
-};
+const int dot_position = 6;
 
- const byte hstrich[8] = {
-  B00111,
-  B00111,
-  B00111,
-  B00111,
-  B00111,
-  B00111,
-  B00111,
-};
-
-/* Number 'Two' */
-/* consists of vdash*/
-const byte underline[8] = {
+byte dot[8]{
   B00000,
   B00000,
   B00000,
   B00000,
   B00000,
-  B11111,
-  B11111,
-};
+  B00000,
+  B00000,
+  };
 
-const byte urcorner[8] = {
-  B11111,
-  B11111,
-  B00001,
-  B00011,
-  B00110,
-  B01100,
-  B11000,
-};
 
-const byte llcorner[8] = {
-  B00001,
-  B00011,
-  B00110,
-  B01100,
-  B11000,
-  B11111,
-  B11111,
-};
-
-/* Number '4' */
-const byte ulcornerIV[8] = 
+/* 
+ *  Initialize libraries and Display.
+ *  Clear after Setup and Display Time
+*/
+void InitDisplay()
 {
-  B00000, 
-  B00000, 
-  B00001, 
-  B00011, 
-  B00110, 
-  B01100, 
-  B11000, 
-  B10000, 
-};
+  lcd.begin(16,2);
+  lcd.createChar(0, dot);
+  lcd.clear();
+  
+  /*
+  lcd.setCursor(dot_position,1);
+  lcd.write(byte(0));
+  lcd.setCursor(dot_position,0);
+  lcd.write(byte(0));
+  */
+  
+  big.begin();
+  
+  lcd.setCursor(0,0);
+  delay(2000);
+ 
+}
 
-const byte urcornerIV[8] = 
+void ShowTime(uint8_t h, uint8_t m,uint8_t s)
 {
-  B01100,
-  B11100,
-  B11100,
-  B01100,
-  B01100,
-  B01100,
-  B01100,
-  B01100,
-};
-
-
-const byte lcornerIV[8] = 
-{
-  B11111,
-  B11111,
-  B00000,
-  B00000,
-  B00000,
-  B00000,
-  B00000,
-  B00000,
-};
-const byte rcornerIV[8] = 
-{
-  B11111,
-  B11111,
-  B01100,
-  B01100,
-  B01100,
-  B01100,
-  B01100,
-  B01100,
-};
-
-/* Number '5' */
-const byte ulcornerV[8] = 
-{
-  B01111,
-  B11111,
-  B11000,
-  B11000,
-  B11000,
-  B11000,
-  B11000,
-  B11000,
-};
-
-const byte urcornerV[8] = 
-{
-  B11111,
-  B11111,
-  B00000,
-  B00000,
-  B00000,
-  B00000,
-  B00000,
-  B00000,
-};
-
-
-const byte lcornerV[8] = 
-{
-  B11111,
-  B11111,
-  B00000,
-  B00000,
-  B00000,
-  B00000,
-  B11111,
-  B11111,
-};
-const byte rcornerV[8] = 
-{
-  B11111,
-  B11111,
-  B00011,
-  B00011,
-  B00011,
-  B00011,
-  B11111,
-  B11111,
-};
-
-
-/* Number '6' */
-const byte ulcornerVI[8] = 
-{
-  B11111,
-  B11111,
-  B11000,
-  B11000,
-  B11000,
-  B11000,
-  B11000,
-  B11000,
-};
-
-const byte urcornerVI[8] = 
-{
-  B11111,
-  B11111,
-  B00000,
-  B00000,
-  B00000,
-  B00000,
-  B00000,
-  B00000,
-};
-
-
-const byte lcornerVI[8] = 
-{
-  B11111,
-  B11111,
-  B11000,
-  B11000,
-  B11000,
-  B11000,
-  B11111,
-  B11111,
-};
-const byte rcornerVI[8] = 
-{
-  B11111,
-  B11111,
-  B00011,
-  B00011,
-  B00011,
-  B00011,
-  B11111,
-  B11111,
-};
-
-
-/* Number '8' */
-const byte ulcornerVII[8] = 
-{
-  B01111,
-  B11111,
-  B11000,
-  B11000,
-  B11000,
-  B11000,
-  B11000,
-  B01111,
-};
-
-const byte urcornerVII[8] = 
-{
-  B11110,
-  B11111,
-  B00011,
-  B00011,
-  B00011,
-  B00011,
-  B00011,
-  B11110,
-};
-
-
-const byte lcornerVII[8] = 
-{
-  B01111,
-  B11000,
-  B11000,
-  B11000,
-  B11000,
-  B11000,
-  B11111,
-  B01111,
-};
-const byte rcornerVII[8] = 
-{
-  B01110,
-  B00011,
-  B00011,
-  B00011,
-  B00011,
-  B00011,
-  B11111,
-  B11110,
-};
+    big.writeint(0,0,h,2,true); // display milliseconds value using 4 digits with leading zeros enabled starting at row 0 column 5
+    big.writeint(0,7,m,2,true);
+    lcd.setCursor(14,0);
+    lcd.print(s);
+}

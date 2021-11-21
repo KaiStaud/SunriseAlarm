@@ -2,22 +2,23 @@
  * Display shows Time and Settings to user.
  * 
  */
-
-struct{
+#include <stdint.h>
+struct rtc_time{
   uint8_t hours;
   uint8_t minutes;
   uint8_t seconds;
-}timespec;
+};
 
+void InitDisplay();
 
 /* Displays Time in 24-Hour Format */
- void ShowTime(timespec t);
- void ShowNextAlarm(timespec t)
+void ShowTime(uint8_t h, uint8_t m,uint8_t s);
+void ShowNextAlarm(uint8_t h, uint8_t m,uint8_t s);
 
  /* Views for Configuration */
  void ShowErrors();
- void ShowRiseTime(timespec t);
- void AddAlarm(timespec t);
+// void ShowRiseTime(rtc_time t);
+// void AddAlarm(rtc_time t);
 
  
  
